@@ -202,10 +202,10 @@ async def attack(ctx):
                 if str(enemy.get_id())==str(player.get_id()):
                     dmg=player.generate_damage()
                     enemy.take_damage(dmg)
-                    await ctx.send(f"you attacked attack for {dmg} hp")
+                    await ctx.send(f"{player.get_name()} attacked attack for {dmg} hp")
                     dmg=enemy.generate_damage()
                     player.take_damage(dmg)
-                    await ctx.send(f"goblin attacked you for {dmg} hp")
+                    await ctx.send(f"goblin attacked {player.get_name()} for {dmg} hp")
                     flag=0
                     if enemy.get_hp()<=0:
                         await ctx.send(f"{player.get_name()} you win ")
@@ -254,7 +254,7 @@ async def evade(ctx):
                 if str(enemy.get_id())==str(player.get_id()):
                     dmg=5
                     player.take_damage(dmg)
-                    await ctx.send(f"goblin attacked you for {dmg} hp")
+                    await ctx.send(f"goblin attacked {player.get_name()} for {dmg} hp")
                     flag=0
                     if player.get_hp()<=0:
                         await ctx.send(f"{player.get_name()} you lose!!")
@@ -287,9 +287,12 @@ async def exit_single_player(ctx):
                 for player in single_players:
                     if player.get_id()==ctx.message.author.id:
                         single_players.remove(player)
+                        await cxt.send(f"{player.get_name()} exits single player mode")
+                        break
                 for player in single_opponents:
                     if player.get_id()==ctx.message.author.id:
                         single_opponents.remove(player)
+                        break
                 with open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\data.json","r+") as file:
                     file.truncate(0)
                     file.seek(0)
@@ -437,7 +440,7 @@ async def rageattack(ctx,member):
                             print(attacker.get_damage())
                             player.take_damage(dmg+10)
                             flag=0
-                            await ctx.send("attacked")
+                            await ctx.send(f"{attacker.get_name()} attacked extensively {player.get_name()}")
                         else:
                             await ctx.send("insufficient xp")
                             flag=0
@@ -509,7 +512,7 @@ async def heal_yourself(ctx,member):
                         print(healer.get_damage())
                         player.take_damage(-player.get_maxhp())
                         flag=0
-                        await ctx.send("healed")
+                        await ctx.send(f"{healer.get_name()} healed {player.get_name()}")
                     else:
                         await ctx.send("insufficient xp")
                         flag=0
@@ -672,12 +675,10 @@ async def exit_multi_player(ctx):
         if data["id"]==ctx.message.author.id:
             if data["status"]=="multi":
                 data["status"]="free"
-                for player in single_players:
+                for player in multi_players:
                     if player.get_id()==ctx.message.author.id:
-                        single_players.remove(player)
-                for player in single_opponents:
-                    if player.get_id()==ctx.message.author.id:
-                        single_opponents.remove(player)
+                        multi_players.remove(player)
+                        await ctx.send(f"{player.get_name()} exits multi player mode")
                 with open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\data.json","r+") as file:
                     file.truncate(0)
                     file.seek(0)
@@ -701,4 +702,4 @@ async def commands(ctx):
     await ctx.send("/exit_multi_player to exit multiplayer mode")
     await ctx.send("/list to get list of players in mulyiplayer mode")
 
-client.run('')
+client.run('token')
