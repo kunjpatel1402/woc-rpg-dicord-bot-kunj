@@ -322,11 +322,15 @@ async def _list(ctx):
     print("here")
     global multi_players
     print(multi_players)
+    flag=1
     for player in multi_players:
         print("listing")
         await ctx.send(f"name:{player.get_name()}")
         await ctx.send(f"hp:{player.get_hp()}")
         await ctx.send(f"xp:{player.get_xp()}")
+        flag=0
+    if flag:
+        await ctx.send("no players have spawned yet")
 
 @client.command(aliases=['duel'])
 async def attack_1(ctx,member):
@@ -425,7 +429,8 @@ async def rageattack(ctx,member):
                         print(player.get_xp())
                         if int(attacker.get_xp())>=5:
                             print("xp checked",player.get_xp())
-                            attacker.reduce_xp(5)
+                            item.reduce_xp(5)
+                            print("xp",attacker.get_xp())
                             for item in json_data:
                                 if item["id"]==attacker.get_id():
                                     item["xp"]-=5
@@ -499,7 +504,8 @@ async def heal_yourself(ctx,member):
                     print(player.get_xp())
                     if int(healer.get_xp())>=8:
                         print("xp checked",player.get_xp())
-                        healer.reduce_xp(8)
+                        item.reduce_xp(8)
+                        print("xp",healer.get_xp())
                         for item in json_data:
                             if item["id"]==healer.get_id():
                                 item["xp"]-=8
