@@ -73,17 +73,4 @@ class _member:
         return self.hp_level
     
 
-class warrior(person):
-    def __init__(self):
-        person.__init__(self,100,2,'',20)
-
-class archer(person):
-    def __init__(self):
-        person.__init__(self,100,2,'',20)
-
-
-class wizard(person):
-    def __init__(self):
-        person.__init__(self,100,2,'',20)
-
 
