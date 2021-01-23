@@ -334,6 +334,7 @@ async def _list(ctx):
 
 @client.command(aliases=['duel'])
 async def attack_1(ctx,member):
+    num=random.randint(1,10)
     global multi_players
     attacker=person(0,0,0,0,0,"xyz")
     print(attacker.get_damage())
@@ -360,34 +361,37 @@ async def attack_1(ctx,member):
             if int(member_id)==int(ctx.message.author.id):
                 await ctx.send("you cannot attack yourself ")
             else:
-                for player in multi_players:
-                    print("inside for loop")
-                    print(player.get_id())
-                    print(member_id)
-                    if player.get_id()==int(member_id):
-                        dmg=attacker.generate_damage()
-                        print(dmg)
-                        print(attacker.get_damage())
-                        player.take_damage(dmg)
-                        flag=0
-                        await ctx.send("attacked")
-                    if player.get_hp()<=0:
-                        await ctx.send(f'{player.get_name()} you lose')
-                        for item in json_data:
-                            if item["name"]==ctx.message.author.name+'#'+ctx.message.author.discriminator:
-                                item["xp"]+=10
-                                await ctx.send(f"{ctx.message.author.name+'#'+ctx.message.author.discriminator} have been awarded 10 xp")
-                            if (item["name"])==str(player.get_name()):
-                                item["status"]="free"
-                        with open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\data.json","r+") as file:
-                            file.truncate(0)
-                            file.seek(0)
-                            file.write(json.dumps(json_data))
-                            file.close()
-                        multi_players.remove(player)
-                        break
-                if flag:
-                    await ctx.send("no such player found or player dead")
+                if num>=1 and num<=7:
+                    for player in multi_players:
+                        print("inside for loop")
+                        print(player.get_id())
+                        print(member_id)
+                        if player.get_id()==int(member_id):
+                            dmg=attacker.generate_damage()
+                            print(dmg)
+                            print(attacker.get_damage())
+                            player.take_damage(dmg)
+                            flag=0
+                            await ctx.send("attacked")
+                        if player.get_hp()<=0:
+                            await ctx.send(f'{player.get_name()} you lose')
+                            for item in json_data:
+                                if item["name"]==ctx.message.author.name+'#'+ctx.message.author.discriminator:
+                                    item["xp"]+=10
+                                    await ctx.send(f"{ctx.message.author.name+'#'+ctx.message.author.discriminator} have been awarded 10 xp")
+                                if (item["name"])==str(player.get_name()):
+                                    item["status"]="free"
+                            with open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\data.json","r+") as file:
+                                file.truncate(0)
+                                file.seek(0)
+                                file.write(json.dumps(json_data))
+                                file.close()
+                            multi_players.remove(player)
+                            break
+                    if flag:
+                        await ctx.send("no such player found or player dead")
+                else:
+                    await ctx.send(f"{attacker.get_name()} missed his attack")
         else:
             await ctx.send("you are currently not playing multi player mode cannot execute this command")
 
