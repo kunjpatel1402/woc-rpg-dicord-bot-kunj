@@ -7,9 +7,10 @@ from characters.classes import team
 from characters.classes import teamplayer
 import json
 import os
+from PIL import Image,ImageColor,ImageFont,ImageDraw
 
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
-client = commands.Bot(command_prefix = '/',intents=intents)
+client = commands.Bot(command_prefix = '-',intents=intents)
 
 #emoji
 crossed_swords=':crossed_swords:'
@@ -29,6 +30,17 @@ single_opponents=[]
 teams=[]
 team_players=[]
 
+
+@client.command()
+async def ping(ctx):
+    my_image=Image.open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\WIN_20210126_18_11_00_Pro.jpg")
+    font=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Chango-Regular.ttf",100)
+    image_text="YOU LOSE!!!"
+    image_editable=ImageDraw.Draw(my_image)
+    image_editable.text((0,150), image_text, (250, 0, 13), font=font)
+    my_image.save(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\temp.jpg")
+    await ctx.send(file=discord.File(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\temp.jpg"))
+    os.remove(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\temp.jpg")
 #setup-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_member_join(member):
@@ -329,7 +341,7 @@ async def attack(ctx):
                                     file.write(json.dumps(json_data))
                                     file.close()
                                 break
-                        single_opponents.remove(goblin)
+                        single_opponents.remove(enemy)
                         single_players.remove(player)
                     elif player.get_hp()<=0:
                         await ctx.send(f"{player.get_name()} you lose!!")
@@ -416,11 +428,6 @@ async def exit_single_player(ctx):
 #multiplayer-------------------------------------------------------------------------------------------------------------------------------------------------------------
 member_damage=0
 member_max_hp=0
-
-@client.command()
-async def ping(ctx):
-    emoji = '\N{THUMBS UP SIGN}'
-    await ctx.send(emoji)
 
 @client.command()
 async def clear(ctx,amount=10):
@@ -555,7 +562,8 @@ async def rageattack(ctx,member):
                                 file.close()
                             await ctx.send("5 xp deducted")
                             dmg=attacker.generate_damage()
-                            print(dmg+10)
+                            dmg+=10
+                            print(dmg)
                             print(attacker.get_damage())
                             player.take_damage(dmg+10)
                             flag=0
@@ -882,10 +890,11 @@ async def leave_team(ctx):
 async def kick_member(ctx,member):
     global teams
     global team_players
-    flag=1
+    flag=0
     player=teamplayer(0,0,0,0,0,0)
     for player in team_players:
-        if int(player.get_id())==int(ctx.message.author.id):
+        if str(player.get_id())==str(ctx.message.author.id):
+            print("found")
             flag=1
             break
     if flag:
@@ -904,12 +913,16 @@ async def kick_member(ctx,member):
                         if str(player.get_id())==str(member_id):
                             await ctx.send(f"{player.get_name()} you cannot kick yourself out of the team")
                         else:
+                            var=1
                             for item in members:
                                 if str(item.get_id())==str(member_id):
                                     item.take_team("none")
                                     tem.remove_member(item)
                                     await ctx.send(f"{item.get_name()} removed from {tem.get_team_name()}")
+                                    var=0
                                     break
+                            if var:
+                                await ctx.send(f"no such player found in team{tem.get_team_name()}")
                     else:
                         await ctx.send(f"{player.get_name()} only leaders can kick members")
                         check=0
