@@ -29,19 +29,52 @@ single_players=[]
 single_opponents=[]
 teams=[]
 team_players=[]
-
+blue_channel=0
+red_channel=0
+guild=0
+category=0
 
 @client.command()
 async def ping(ctx):
-    my_image=Image.open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\WIN_20210126_18_11_00_Pro.jpg")
-    font=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Chango-Regular.ttf",100)
-    image_text="YOU LOSE!!!"
+    global blue_channel
+    await blue_channel.delete()
+
+def vs_image(red_leader,blue_leader):
+    my_image=Image.open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\team_vs.png")
+    font=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",100)
+    font_leader=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",70)
+    font_vs=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",150)
+    image_text="BLUE"
     image_editable=ImageDraw.Draw(my_image)
-    image_editable.text((0,150), image_text, (250, 0, 13), font=font)
-    my_image.save(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\temp.jpg")
-    await ctx.send(file=discord.File(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\temp.jpg"))
-    os.remove(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\temp.jpg")
-#setup-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    image_editable.text((675,315), image_text, (7, 229, 245), font=font)
+    image_editable.text((360,510), blue_leader, (7, 229, 245), font=font_leader)
+    image_text="RED"
+    image_editable.text((150,315), image_text, (250, 5, 17), font=font)
+    image_editable.text((360,185), red_leader, (250, 5, 17), font=font_leader)
+    my_image.save(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\team_vs1.png")
+
+def ko_image(player_name):
+    my_image=Image.open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-boxers.jpg")
+    font=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",100)
+    font_leader=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",70)
+    font_vs=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",150)
+    text="was Knocked Out"
+    image_editable=ImageDraw.Draw(my_image)
+    image_editable.text((10,10), player_name, (204, 126, 242), font=font)
+    image_editable.text((1100,830), text, (204, 126, 242), font=font)
+    my_image.save(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-boxers1.jpg")
+
+def spawn_img(blue_leader):
+    my_image=Image.open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\spawn.jpg")
+    font=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",100)
+    font_leader=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",70)
+    font_vs=ImageFont.truetype(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\Nunito-SemiBoldItalic.ttf",150)
+    text="Spawned!"
+    image_editable=ImageDraw.Draw(my_image)
+    image_editable.text((10,10), blue_leader, (255, 255, 255), font=font)
+    image_editable.text((800,600), text, (255, 255, 255), font=font)
+    my_image.save(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\spawn1.jpg")
+#setup------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_member_join(member):
     print(f"{member} joined")
@@ -53,6 +86,10 @@ async def on_member_remove(member):
 
 @client.event
 async def on_ready():
+    global guild
+    global category
+    guild=client.get_guild(server_id)
+    category=guild.get_channel(cat_id)
     global json_data
     global members
     try:
@@ -102,20 +139,34 @@ async def create_profile(ctx):
 
 @client.command()
 async def commands(ctx):
-    await ctx.send("/start to start single player mode")
-    await ctx.send("/create_profile creates profile in database")
-    await ctx.send("/spawn to spawn in multiplayer battle")
-    await ctx.send("/duel to attack in multi player battle")
-    await ctx.send("/rage to do extensive damage in multi player battle")
-    await ctx.send("/attack to attack goblin in single player mode")
-    await ctx.send("/evade to evade in single player mode")
-    await ctx.send("/exit_single_player to exit single player mode")
-    await ctx.send("/exit_multi_player to exit multiplayer mode")
-    await ctx.send("/list to get list of players in mulyiplayer mode")
+    await ctx.send("-start_spm to play in single player mode")
+    await ctx.send("    -atk to attack goblin in single player mode")
+    await ctx.send("    -evade to evade from goblin single player mode")
+    await ctx.send("    -exit_spm to exit single player mode")
+    await ctx.send("-create_profile creates profile in database")
+    await ctx.send("-start_ffa to spawn in multiplayer battle")
+    await ctx.send("    -strike_ffa @<player name> to attack in multiplayer battle")
+    await ctx.send("    -rage_ffa @<player name> to do extensive damage in multiplayer battle")
+    await ctx.send("    -heal_ffa @<player name> to heal a player in multiplayer battle")
+    await ctx.send("    -exit_ffa to exit multiplayer mode")
+    await ctx.send("    -list_ffa to get list of players in multiplayer mode")
+    await ctx.send("-start_tdm to spawn in team player mode")
+    await ctx.send("    -strike_tdm @<player name> to attack player in team death match")
+    await ctx.send("    -rage_tdm @<player name> to give extensive damage in team player mode")
+    await ctx.send("    -heal_tdm @<player name> to heal player in team player mode")
+    await ctx.send("    -list_tdm to list in team")
+    await ctx.send("    -exit_tdm to exit team player mode")
+    await ctx.send("    -join_team <team name> to join team")
+    await ctx.send("    -leave_team to leave present team")
+    await ctx.send("    -kick_member @<player name> to kick member out of your team")
+    await ctx.send("-lab to open laboratory")
+    await ctx.send("-hp to increase hit points")
+    await ctx.send("-dmg to increase damage")
+    await ctx.send("-show_profile to see your profile")
 
 
 @client.command()
-async def shop(ctx):
+async def lab(ctx):
     await ctx.send("upgrades available:")
     await ctx.send("1. type /hp to increase hp level")
     await ctx.send("1. type /dmg to increase damage level")
@@ -208,7 +259,7 @@ async def show_profile(ctx):
 #single player-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @client.command()
-async def start(ctx):
+async def start_spm(ctx):
     await ctx.send(f'Choose a class\n1.{armour}Warrior \n2.{bow_arrow}Archer \n3.{":man_mage:"}Wizard')
 
 @client.command()
@@ -315,7 +366,7 @@ async def proceed(ctx):
     await ctx.send(f"WHAT WILL YOU LIKE TO DO:\n1. {crossed_swords}attack\n2. {man_running}evade")
 
 @client.command()
-async def attack(ctx):
+async def atk(ctx):
     flag=1
     for player in single_players:
         if str(player.get_id())==str(ctx.message.author.id):
@@ -399,7 +450,7 @@ async def evade(ctx):
         await ctx.send("you are not playing single player mode")
 
 @client.command()
-async def exit_single_player(ctx):
+async def exit_spm(ctx):
     flag=1
     for data in json_data:
         if data["id"]==ctx.message.author.id:
@@ -430,10 +481,10 @@ member_damage=0
 member_max_hp=0
 
 @client.command()
-async def clear(ctx,amount=10):
+async def clear(ctx,amount=2):
     await ctx.channel.purge(limit=amount)
 
-@client.command(aliases=['list'])
+@client.command(aliases=['list_ffa'])
 async def _list(ctx):
     print("here")
     global multi_players
@@ -448,7 +499,7 @@ async def _list(ctx):
     if flag:
         await ctx.send("no players have spawned yet")
 
-@client.command(aliases=['duel'])
+@client.command(aliases=['strike_ffa'])
 async def attack_1(ctx,member):
     num=random.randint(1,10)
     global multi_players
@@ -490,7 +541,8 @@ async def attack_1(ctx,member):
                             player.take_damage(dmg)
                             await ctx.send(f"{attacker.get_name()} attacked {player.get_name()} for {dmg} hp")
                             if player.get_hp()<=0:
-                                await ctx.send(f'{player.get_name()} you lose')
+                                ko_image(player.get_name())
+                                await ctx.send(file=discord.File(r'C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-BOXERS1.jpg'))
                                 for item in json_data:
                                     if item["name"]==ctx.message.author.name+'#'+ctx.message.author.discriminator:
                                         item["xp"]+=10
@@ -508,12 +560,12 @@ async def attack_1(ctx,member):
                             await ctx.send(f"{attacker.get_name()} missed his attack on {player.get_name()}")
                             break
                 if flag:
-                    await ctx.send("no such player found or player dead")                    
+                    await ctx.send("no such player found or player knocked out")                    
     else:
         await ctx.send("you are currently not playing multi player mode cannot execute this command")
 
 
-@client.command(aliases=['rage'])
+@client.command(aliases=['rage_ffa'])
 async def rageattack(ctx,member):
     global multi_players
     attacker=person(0,0,0,0,0,"xyz")
@@ -572,7 +624,8 @@ async def rageattack(ctx,member):
                             await ctx.send("insufficient xp")
                             flag=0
                         if player.get_hp()<=0:
-                            await ctx.send(f'{player.get_name()} you lose')
+                            ko_image(player.get_name())
+                            await ctx.send(file=discord.File(r'C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-BOXERS1.jpg'))
                             for item in json_data:
                                 if item["name"]==ctx.message.author.name+'#'+ctx.message.author.discriminator:
                                     item["xp"]+=10
@@ -587,12 +640,12 @@ async def rageattack(ctx,member):
                             multi_players.remove(player)
                             break
                 if flag:
-                    await ctx.send("no such player found or player dead")
+                    await ctx.send("no such player found or player knocked out")
     else:
         await ctx.send("you are currently not playing multi player mode cannot execute this command")
 
 
-@client.command(aliases=['heal'])
+@client.command(aliases=['heal_ffa'])
 async def heal_yourself(ctx,member):
     global multi_players
     healer=person(0,0,0,0,0,"xyz")
@@ -645,7 +698,8 @@ async def heal_yourself(ctx,member):
                         await ctx.send("insufficient xp")
                         flag=0
                     if player.get_hp()<=0:
-                        await ctx.send(f'{player.get_name()} you lose')
+                        ko_image(player.get_name())
+                        await ctx.send(file=discord.File(r'C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-BOXERS1.jpg'))
                         for item in json_data:
                             if item["name"]==ctx.message.author.name+'#'+ctx.message.author.discriminator:
                                 item["xp"]+=10
@@ -660,12 +714,12 @@ async def heal_yourself(ctx,member):
                         multi_players.remove(player)
                         break
             if flag:
-                await ctx.send("no such player found or player dead")
+                await ctx.send("no such player found or player knocked out")
     else:
         await ctx.send("you are currently not playing multi player mode cannot execute this command")
 
 @client.command()
-async def spawn(ctx):
+async def start_ffa(ctx):
     var=1
     if var:
         global multi_players
@@ -689,7 +743,8 @@ async def spawn(ctx):
                                     file.write(json.dumps(json_data))
                                     file.close()
                                 multi_players.append(new_person)
-                                await ctx.send(f"{item.get_member_name()} spawned in multi player mode")
+                                spawn_img(item.get_member_name())
+                                await ctx.send(file=discord.File(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\spawn1.jpg"))
                             else:
                                 await ctx.send("cannot execute this command in this mode")
                     flag=0
@@ -702,7 +757,7 @@ async def spawn(ctx):
         await ctx.send("you are not playing multiplayer mode")
 
 @client.command()
-async def exit_multi_player(ctx):
+async def exit_ffa(ctx):
     flag=1
     for data in json_data:
         if data["id"]==ctx.message.author.id:
@@ -722,10 +777,10 @@ async def exit_multi_player(ctx):
     if flag:
         await ctx.send("you are not in multi player mode")
 
-#team player-------------------------------------------------------------------------------------------------------------------------------------------------------------
+#teamplayer-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @client.command()
-async def spawn_team_mode(ctx):
+async def start_tdm(ctx):
     var=1
     if var:
         global team_players
@@ -749,8 +804,9 @@ async def spawn_team_mode(ctx):
                                     file.seek(0)
                                     file.write(json.dumps(json_data))
                                     file.close()
-                                multi_players.append(new_person)
-                                await ctx.send(f"{item.get_member_name()} spawned in team player mode")
+                                team_players.append(new_person)
+                                spawn_img(item.get_member_name())
+                                await ctx.send(file=discord.File(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\spawn1.jpg"))
                             else:
                                 await ctx.send("cannot execute this command in this mode")
                     flag=0
@@ -762,42 +818,70 @@ async def spawn_team_mode(ctx):
     else:
         await ctx.send("you are not playing teamplayer mode")
 
-
+blue_leader=''
+red_leader=''
 @client.command()
-async def create_team(ctx,team_name):
+async def create_team(ctx):
+    global red_channel
+    global blue_channel
+    global blue_leader
+    global red_leader
+    global category
+    global guild
     flag=1
     global teams
     global team_players
-    for player in team_players:
-        if int(player.get_id())==int(ctx.message.author.id):
-            flag=0
-            if player.get_team()=="none":
-                if team_name!="none":
-                    check=1
-                    for item in teams:
-                        if str(item.get_team_name())==str(team_name):
-                            check=0
+    print("len:",len(teams))
+    if int(len(teams))<2:
+        print("inside if")
+        if len(teams)==0:
+            team_name="BLUE"
+            blue_leader=ctx.message.author.name+'#'+ctx.message.author.discriminator
+            print(blue_leader)
+        elif len(teams)==1:
+            team_name="RED"
+        for player in team_players:
+            if int(player.get_id())==int(ctx.message.author.id):
+                flag=0
+                if player.get_team()=="none":
+                    if team_name!="none":
+                        check=1
+                        for item in teams:
+                            if str(item.get_team_name())==str(team_name):
+                                check=0
+                                break
+                        if check:
+                            new_team=team(team_name,ctx.message.author.id)
+                            player.take_team(team_name)
+                            new_team.add_member(player)
+                            teams.append(new_team)
+                            await ctx.send(f"created a new team {team_name} with leader {player.get_name()}")
+                            if team_name=="BLUE":
+                                blue_channel=await guild.create_voice_channel("blue team",category=category)
+                            if team_name=="RED":
+                                red_channel=await guild.create_voice_channel("red team",category=category)
+                                red_leader=ctx.message.author.name+'#'+ctx.message.author.discriminator 
+                                print(blue_leader)
+                                vs_image(red_leader,blue_leader)
+                                await ctx.send(file=discord.File(r'C:\Users\Kunj R. Patel\Desktop\python\BOT\team_vs1.png'))
+                                await ctx.send("all teams created")
                             break
-                    if check:
-                        new_team=team(team_name,ctx.message.author.id)
-                        player.take_team(team_name)
-                        new_team.add_member(player)
-                        teams.append(new_team)
-                        await ctx.send(f"created a new team named {team_name} with leader {player.get_name()}")
-                        break
+                        else:
+                            await ctx.send(f"{team_name} team name has already been taken please choose another one")
                     else:
-                        await ctx.send(f"{team_name} team name has already been taken please choose another one")
+                        await ctx.send(f"please choose another team name")
+                        break
                 else:
-                    await ctx.send(f"please choose another team name")
+                    await ctx.send(f"{player.get_name()} you are already in a team")
                     break
-            else:
-                await ctx.send(f"{player.get_name()} you are already in a team")
-                break
-    if flag:
-        await ctx.send(f"{ctx.message.author.name+'#'+ctx.message.author.discriminator} you have not yet spawned in team player mode")
+        if flag:
+            await ctx.send(f"{ctx.message.author.name+'#'+ctx.message.author.discriminator} you have not yet spawned in team player mode")
+        print("len_:",len(teams))
+    else:
+        await ctx.send("teams already created")
 
 @client.command()
-async def list_team_members(ctx):
+async def list_tdm(ctx):
     global team_players
     global teams
     flag=0
@@ -874,6 +958,10 @@ async def leave_team(ctx):
                     if len(tem.get_team_members())==0:
                         await ctx.send(f"team {tem.get_team_name()} removed as there were no members in it")
                         teams.remove(tem)
+                        if tem.get_team_name()=="BLUE":
+                            await blue_channel.delete()
+                        elif tem.get_team_name()=="RED":
+                            await red_channel.delete()
                         break
                     if int(tem.get_leader_id())==int(player.get_id()):
                         await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()}")
@@ -931,7 +1019,7 @@ async def kick_member(ctx,member):
         await ctx.send(f"{ctx.message.author.name+'#'+ctx.message.author.discriminator} you have not yet spawned in team player mode")
 
 @client.command()
-async def exit_team_player(ctx):
+async def exit_tdm(ctx):
     global team_players
     global teams
     flag=1
@@ -950,6 +1038,10 @@ async def exit_team_player(ctx):
                                 if len(tem.get_team_members())==0:
                                     await ctx.send(f"team {tem.get_team_name()} removed as there were no members in it")
                                     teams.remove(tem)
+                                    if tem.get_team_name()=="BLUE":
+                                        await blue_channel.delete()
+                                    elif tem.get_team_name()=="RED":
+                                        await red_channel.delete()
                                     break
                                 if int(tem.get_leader_id())==int(player.get_id()):
                                     await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()}")
@@ -971,7 +1063,7 @@ async def exit_team_player(ctx):
 
 
 @client.command()
-async def duel_team(ctx,member):
+async def strike_tdm(ctx,member):
     num=random.randint(1,10)
     global team_players
     attacker=person(0,0,0,0,0,"xyz")
@@ -1009,6 +1101,7 @@ async def duel_team(ctx,member):
                         if str(player.get_team())==str(attacker.get_team()):
                             await ctx.send(f"{attacker.get_name()} you cannot attack your team member{player.get_name()}")
                             flag=0
+                            break
                         else:
                             flag=0
                             if player.get_team()=="none":
@@ -1026,13 +1119,19 @@ async def duel_team(ctx,member):
                                             player.take_team("none")
                                             tem.remove_member(player)
                                             check=0
-                                            await ctx.send(f"{player.get_name()} left {tem.get_team_name()} as he died")    
+                                            ko_image(player.get_name())
+                                            await ctx.send(file=discord.File(r'C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-BOXERS1.jpg'))
+                                            await ctx.send(f"{player.get_name()} left {tem.get_team_name()} as was knocked out")    
                                             if len(tem.get_team_members())==0:
                                                 await ctx.send(f"team {tem.get_team_name()} removed as there were no members in it")
                                                 teams.remove(tem)
+                                                if tem.get_team_name()=="BLUE":
+                                                    await blue_channel.delete()
+                                                elif tem.get_team_name()=="RED":
+                                                    await red_channel.delete()
                                                 break
                                             if int(tem.get_leader_id())==int(player.get_id()):
-                                                await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()} as he died")
+                                                await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()} as he was knocked out")
                                                 members=tem.get_team_members()
                                                 tem.change_leader_id(members[0].get_id())
                                                 await ctx.send(f"{members[0].get_name()} is the new leader of team {tem.get_team_name()}")
@@ -1052,12 +1151,12 @@ async def duel_team(ctx,member):
                                     team_players.remove(player)
                                 break
                 if flag:
-                    await ctx.send("no such player found or player dead")                    
+                    await ctx.send("no such player found or player knocked out")                    
     else:
         await ctx.send("you are currently not playing team player mode cannot execute this command")
 
 @client.command()
-async def rage_team(ctx,member):
+async def rage_tdm(ctx,member):
     num=random.randint(1,10)
     global team_players
     attacker=person(0,0,0,0,0,"xyz")
@@ -1130,13 +1229,19 @@ async def rage_team(ctx,member):
                                             player.take_team("none")
                                             tem.remove_member(player)
                                             check=0
-                                            await ctx.send(f"{player.get_name()} left {tem.get_team_name()} as he died")    
+                                            ko_image(player.get_name())
+                                            await ctx.send(file=discord.File(r'C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-BOXERS1.jpg'))
+                                            await ctx.send(f"{player.get_name()} left {tem.get_team_name()} as he was knocked out")    
                                             if len(tem.get_team_members())==0:
                                                 await ctx.send(f"team {tem.get_team_name()} removed as there were no members in it")
                                                 teams.remove(tem)
+                                                if tem.get_team_name()=="BLUE":
+                                                    await blue_channel.delete()
+                                                elif tem.get_team_name()=="RED":
+                                                    await red_channel.delete()
                                                 break
                                             if int(tem.get_leader_id())==int(player.get_id()):
-                                                await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()} as he died")
+                                                await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()} as he was knocked out")
                                                 members=tem.get_team_members()
                                                 tem.change_leader_id(members[0].get_id())
                                                 await ctx.send(f"{members[0].get_name()} is the new leader of team {tem.get_team_name()}")
@@ -1156,12 +1261,12 @@ async def rage_team(ctx,member):
                                     team_players.remove(player)
                                 break
                 if flag:
-                    await ctx.send("no such player found or player dead")                    
+                    await ctx.send("no such player found or player was knocked out")                    
     else:
         await ctx.send("you are currently not playing team player mode cannot execute this command")
 
 @client.command()
-async def heal_team(ctx,member):
+async def heal_tdm(ctx,member):
     global team_players
     attacker=person(0,0,0,0,0,"xyz")
     print(attacker.get_damage())
@@ -1224,13 +1329,19 @@ async def heal_team(ctx,member):
                                     player.take_team("none")
                                     tem.remove_member(player)
                                     check=0
-                                    await ctx.send(f"{player.get_name()} left {tem.get_team_name()} as he died")    
+                                    ko_image(player.get_name())
+                                    await ctx.send(file=discord.File(r'C:\Users\Kunj R. Patel\Desktop\python\BOT\KO-BOXERS1.jpg'))
+                                    await ctx.send(f"{player.get_name()} left {tem.get_team_name()} as he was knocked out")    
                                     if len(tem.get_team_members())==0:
                                         await ctx.send(f"team {tem.get_team_name()} removed as there were no members in it")
                                         teams.remove(tem)
+                                        if tem.get_team_name()=="BLUE":
+                                            await blue_channel.delete()
+                                        elif tem.get_team_name()=="RED":
+                                            await red_channel.delete()
                                         break
                                     if int(tem.get_leader_id())==int(player.get_id()):
-                                        await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()} as he died")
+                                        await ctx.send(f"leader {player.get_name()} left the team {tem.get_team_name()} as he was knocked out")
                                         members=tem.get_team_members()
                                         tem.change_leader_id(members[0].get_id())
                                         await ctx.send(f"{members[0].get_name()} is the new leader of team {tem.get_team_name()}")
