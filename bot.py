@@ -89,7 +89,7 @@ async def on_ready():
     global guild
     global category
     guild=client.get_guild(server_id)
-    category=guild.get_channel(cat_id)
+    category=guild.get_channel(channel_id)
     global json_data
     global members
     try:
@@ -766,7 +766,7 @@ async def exit_ffa(ctx):
                 for player in multi_players:
                     if player.get_id()==ctx.message.author.id:
                         multi_players.remove(player)
-                        await ctx.send(f"{player.get_name()} exits multi player mode")
+                await ctx.send(f"{player.get_name()} exits multi player mode")
                 with open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\data.json","r+") as file:
                     file.truncate(0)
                     file.seek(0)
@@ -804,7 +804,6 @@ async def start_tdm(ctx):
                                     file.seek(0)
                                     file.write(json.dumps(json_data))
                                     file.close()
-                                team_players.append(new_person)
                                 spawn_img(item.get_member_name())
                                 await ctx.send(file=discord.File(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\spawn1.jpg"))
                             else:
@@ -812,7 +811,7 @@ async def start_tdm(ctx):
                     flag=0
             if flag:
                 await ctx.send("profile not found create one with /create_profile")
-            print(multi_players)
+            print(team_players)
         elif check==0:
             await ctx.send("player already spawned")
     else:
@@ -1029,6 +1028,7 @@ async def exit_tdm(ctx):
                 data["status"]="free"
                 for player in team_players:
                     if player.get_id()==ctx.message.author.id:
+                        team_players.remove(player)
                         for tem in teams:
                             if str(tem.get_team_name())==str(player.get_team()):
                                 player.take_team("none")
@@ -1048,9 +1048,9 @@ async def exit_tdm(ctx):
                                     members=tem.get_team_members()
                                     tem.change_leader_id(members[0].get_id())
                                     await ctx.send(f"{members[0].get_name()} is the new leader of team {tem.get_team_name()}")
-                                await ctx.send(f"{player.get_name()} exits team player mode")
-                                team_players.remove(player)
-                                break
+                                print("player removed")
+                        await ctx.send(f"{player.get_name()} exits team player mode")
+                        break
                 with open(r"C:\Users\Kunj R. Patel\Desktop\python\BOT\data.json","r+") as file:
                     file.truncate(0)
                     file.seek(0)
