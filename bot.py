@@ -88,8 +88,8 @@ async def on_member_remove(member):
 async def on_ready():
     global guild
     global category
-    guild=client.get_guild(server_id)
-    category=guild.get_channel(channel_id)
+    guild=client.get_guild(id)
+    category=guild.get_channel(id)
     global json_data
     global members
     try:
@@ -292,7 +292,7 @@ async def warrior(ctx):
                 else:
                     await ctx.send("you are not playing single player mode")
     else:
-        await ctx.send("please create a profile by typing /create_profile")
+        await ctx.send("please create a profile by typing -create_profile")
 @client.command()
 async def archer(ctx):
     flag=0
@@ -323,7 +323,7 @@ async def archer(ctx):
                 else:
                     await ctx.send("you are not playing single player mode")
     else:
-        await ctx.send("please create a profile by typing /create_profile")
+        await ctx.send("please create a profile by typing -create_profile")
 @client.command()
 async def wizard(ctx):
     flag=0
@@ -358,7 +358,7 @@ async def wizard(ctx):
                 else:
                     await ctx.send("you are not playing single player mode")
     else:
-        await ctx.send("please create a profile by typing /create_profile")
+        await ctx.send("please create a profile by typing -create_profile")
 
 @client.command()
 async def proceed(ctx):
@@ -481,7 +481,7 @@ member_damage=0
 member_max_hp=0
 
 @client.command()
-async def clear(ctx,amount=2):
+async def clear(ctx,amount=80):
     await ctx.channel.purge(limit=amount)
 
 @client.command(aliases=['list_ffa'])
