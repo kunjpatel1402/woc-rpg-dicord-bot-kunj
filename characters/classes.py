@@ -99,6 +99,7 @@ class team:
     def change_leader_id(self,id):
         self.team_leader=id
 
+        
 class teamplayer(person):
 
     def __init__(self,hp,xp,name,damage,id,status):
